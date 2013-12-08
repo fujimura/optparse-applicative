@@ -1,1 +1,3 @@
 language: haskell
+install:
+  - PATH=/home/travis/.cabal/bin:$PATH cabal install --enable-tests --only-dependencies
