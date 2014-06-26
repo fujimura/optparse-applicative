@@ -10,9 +10,11 @@ module Options.Applicative.Help.Core (
   bodyHelp,
   footerHelp,
   parserHelp,
+  fullHelp,
   parserUsage,
   ) where
 
+import Control.Applicative (pure)
 import Control.Monad (guard)
 import Data.List (intersperse, sort)
 import Data.Maybe (maybeToList, catMaybes)
@@ -157,3 +159,15 @@ parserUsage pprefs p progn = hsep $
   [ string "Usage:"
   , string progn
   , align (extractChunk (briefDesc pprefs p)) ]
+
+-- | Generate the full help text for a program.
+fullHelp :: ParserPrefs -> ParserInfo a -> String -> ParserHelp
+fullHelp pprefs pinfo progn = mconcat [ headerHelp (infoHeader pinfo)
+                                      , footerHelp (infoFooter pinfo)
+                                      , parserHelp pprefs (infoParser pinfo)
+                                      -- TODO Duplicating to local function in parserFailure
+                                      , usageHelp $ vcatChunks
+                                        [ pure . parserUsage pprefs (infoParser pinfo) . unwords $ [progn]
+                                        , fmap (indent 2) . infoProgDesc $ pinfo
+                                        ]
+                                      ]

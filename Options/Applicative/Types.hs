@@ -243,6 +243,7 @@ newtype ParserFailure = ParserFailure
 data ParserResult a
   = Success a
   | Failure ParserFailure
+  | NoArgumentsProvided
   | CompletionInvoked CompletionResult
 
 type Args = [String]
